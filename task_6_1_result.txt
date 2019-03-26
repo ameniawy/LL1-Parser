@@ -1,0 +1,30 @@
+E : $ : 
+E : id : T E'
+E : ( : T E'
+E : * : 
+E : + : 
+E : ) : 
+E' : $ : epsilon
+E' : id : 
+E' : ( : 
+E' : * : 
+E' : + : + T E'
+E' : ) : epsilon
+T : $ : 
+T : id : F T'
+T : ( : F T'
+T : * : 
+T : + : 
+T : ) : 
+T' : $ : epsilon
+T' : id : 
+T' : ( : 
+T' : * : * F T'
+T' : + : epsilon
+T' : ) : epsilon
+F : $ : 
+F : id : id
+F : ( : ( E )
+F : * : 
+F : + : 
+F : ) : 

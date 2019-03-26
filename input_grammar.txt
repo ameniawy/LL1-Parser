@@ -1,0 +1,5 @@
+E : T E' : id ( : $ )
+E' : + T E' | epsilon : + epsilon : $ )
+T : F T' : id ( : + ) $
+T' : * F T' | epsilon : * epsilon : + ) $
+F : id | ( E ) : id ( : * + ) $
