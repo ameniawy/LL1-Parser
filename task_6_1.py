@@ -36,7 +36,6 @@ def read_input_string(file_name):
 
 
 def get_productions(grammar, first, rule_id, terminal):
-
     res = []
     for production in grammar[rule_id]:
         for literal in production:
@@ -53,9 +52,20 @@ def get_productions(grammar, first, rule_id, terminal):
     return res
 
 
+def get_terminals(grammar):
+    terminals = set()
+    terminals.add('$')
+    for _, productions in grammar.items():
+        for production in productions:
+            for literal in production:
+                if literal.strip() not in grammar.keys() and literal.strip() != 'epsilon':
+                    terminals.add(literal.strip())
+
+    return list(terminals)
+
+
 def compute_LL1_table(grammar, first, follow):
-    terminals = list(first.values()) + list(follow.values())
-    terminals = list(set(sum(terminals, [])))
+    terminals = get_terminals(grammar)
 
     if 'epsilon' in terminals:
         terminals.remove('epsilon')
@@ -84,22 +94,17 @@ def compute_LL1_table(grammar, first, follow):
 
 
 def check_input(input_string, table, grammar, start_variable, first, follow):
+    terminals = get_terminals(grammar)
 
-    terminals = list(first.values()) + list(follow.values())
-    terminals = list(set(sum(terminals, [])))
+    input_string.append('$')
 
     stack = list()
     stack.append('$')
     stack.append(start_variable)
 
     while(len(stack) > 0):
-        # print("STACK: ", stack)
         string_literal = input_string[0].strip()
         stack_literal = stack.pop().strip()
-        # print(string_literal, stack_literal)
-        # print(string_literal not in grammar, stack_literal.strip() in grammar.keys())
-        # print(stack_literal.strip() in grammar.keys())
-        # print()
 
         if string_literal not in grammar and string_literal not in terminals:
             return False
@@ -111,7 +116,6 @@ def check_input(input_string, table, grammar, start_variable, first, follow):
 
         # case 2: term, var
         elif string_literal not in grammar and stack_literal in grammar:
-            # print("HERE")
             next_rule = table[(stack_literal, string_literal)]
             if len(next_rule) != 1:
                 return False
@@ -138,9 +142,11 @@ def check_input(input_string, table, grammar, start_variable, first, follow):
         elif string_literal == '$' and stack_literal not in grammar:
             return False
 
+        # case 5: term, $
         elif string_literal not in grammar and string_literal != '$' and stack_literal == '$':
             return False
 
+        # case 6, $, $
         elif string_literal == '$' and stack_literal == '$':
             return True
 
@@ -162,6 +168,11 @@ def output_parsing_table(file_name, table):
         output_file.write(line)
 
 
+def output_string_check(file_name, valid):
+    output_file_2 = open(file_name, 'w+')
+    output_file_2.write('yes' if valid else 'no')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         add_help=True, description='Sample Commandline')
@@ -176,23 +187,22 @@ if __name__ == '__main__':
     output_file_1 = 'task_6_1_result.txt'
     output_file_2 = 'task_6_2_result.txt'
 
-    print(args.grammar)
-    print(args.input)
-
+    # read grammar, first, follow, start variable
     grammar, first, follow, start_variable = read_grammar(args.grammar)
+    # read input string
     input_string = read_input_string(args.input)
-    input_string.append('$')
 
+    # compute parsing table
     table = compute_LL1_table(grammar, first, follow)
 
     if table:
+        # output parsing table
         output_parsing_table(output_file_1, table)
-        valid = check_input(input_string, table, grammar, start_variable, first, follow)
-        output_file_2 = open(output_file_2, 'w+')
-        output_file_2.write('yes' if valid else 'no')
+        # check input string against table
+        valid = check_input(input_string, table, grammar,
+                            start_variable, first, follow)
+        # ourput string check result
+        output_string_check(output_file_2, valid)
+
     else:
         output_fail(output_file_1)
-
-    # print(table)
-
-    # print(input_string)

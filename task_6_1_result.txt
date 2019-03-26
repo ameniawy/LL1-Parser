@@ -1,30 +1,30 @@
-E : $ : 
-E : id : T E'
-E : ( : T E'
-E : * : 
 E : + : 
+E : ( : T E'
+E : id : T E'
+E : $ : 
 E : ) : 
-E' : $ : epsilon
-E' : id : 
-E' : ( : 
-E' : * : 
+E : * : 
 E' : + : + T E'
+E' : ( : 
+E' : id : 
+E' : $ : epsilon
 E' : ) : epsilon
-T : $ : 
-T : id : F T'
-T : ( : F T'
-T : * : 
+E' : * : 
 T : + : 
+T : ( : F T'
+T : id : F T'
+T : $ : 
 T : ) : 
-T' : $ : epsilon
-T' : id : 
-T' : ( : 
-T' : * : * F T'
+T : * : 
 T' : + : epsilon
+T' : ( : 
+T' : id : 
+T' : $ : epsilon
 T' : ) : epsilon
-F : $ : 
-F : id : id
-F : ( : ( E )
-F : * : 
+T' : * : * F T'
 F : + : 
+F : ( : ( E )
+F : id : id
+F : $ : 
 F : ) : 
+F : * : 
